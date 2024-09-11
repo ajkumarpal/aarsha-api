@@ -1,0 +1,54 @@
+{
+  "books": [
+    {
+      "id": 1,
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "year": 1960,
+      "genre": "Fiction",
+      "description": "A novel about the serious issues of rape and racial inequality, told through the eyes of young Scout Finch in the 1930s American South.",
+      "short_description": "A gripping tale of racial injustice in the Deep South.",
+      "thumbnail": "https://example.com/tokillamockingbird.jpg"
+    },
+    {
+      "id": 2,
+      "title": "1984",
+      "author": "George Orwell",
+      "year": 1949,
+      "genre": "Dystopian",
+      "description": "A chilling depiction of a totalitarian regime where the Party exercises complete control over its citizens, and surveillance is constant.",
+      "short_description": "A dystopian novel about surveillance and totalitarianism.",
+      "thumbnail": "https://example.com/1984.jpg"
+    },
+    {
+      "id": 3,
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "year": 1925,
+      "genre": "Classic",
+      "description": "A story of the young and mysterious millionaire Jay Gatsby and his quixotic passion for the beautiful Daisy Buchanan in the Roaring Twenties.",
+      "short_description": "A tragic romance set in the Roaring Twenties.",
+      "thumbnail": "https://example.com/greatgatsby.jpg"
+    },
+    {
+      "id": 4,
+      "title": "Moby Dick",
+      "author": "Herman Melville",
+      "year": 1851,
+      "genre": "Adventure",
+      "description": "The narrative of Captain Ahab's obsessive quest to seek revenge on the gigantic white whale that crippled him.",
+      "short_description": "An epic sea adventure and the quest for revenge.",
+      "thumbnail": "https://example.com/mobydick.jpg"
+    },
+    {
+      "id": 5,
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "year": 1813,
+      "genre": "Romance",
+      "description": "A romantic novel that highlights the issues of class, marriage, and morality in 19th century England through the story of Elizabeth Bennet and Mr. Darcy.",
+      "short_description": "A witty romance in 19th century England.",
+      "thumbnail": "https://example.com/prideandprejudice.jpg"
+    }
+  ]
+}
