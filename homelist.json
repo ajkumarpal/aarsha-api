@@ -3,52 +3,44 @@
     {
       "id": 1,
       "title": "To Kill a Mockingbird",
+      "kinkLine": "Love To have you!",
       "author": "Harper Lee",
-      "year": 1960,
-      "genre": "Fiction",
-      "description": "A novel about the serious issues of rape and racial inequality, told through the eyes of young Scout Finch in the 1930s American South.",
-      "short_description": "A gripping tale of racial injustice in the Deep South.",
-      "thumbnail": "https://example.com/tokillamockingbird.jpg"
+      "thumbnail": "https://fastly.picsum.photos/id/152/3888/2592.jpg?hmac=M1xv1MzO9xjf5-tz1hGR9bQpNt973ANkqfEVDW0-WYU"
     },
     {
       "id": 2,
       "title": "1984",
+      "kinkLine": "Love To have you!",
       "author": "George Orwell",
-      "year": 1949,
-      "genre": "Dystopian",
-      "description": "A chilling depiction of a totalitarian regime where the Party exercises complete control over its citizens, and surveillance is constant.",
-      "short_description": "A dystopian novel about surveillance and totalitarianism.",
-      "thumbnail": "https://example.com/1984.jpg"
+      "thumbnail": "https://fastly.picsum.photos/id/12/3888/2592.jpg?hmac=z5QnvAxvFWTEDcrH9g34B5whrOlRpoyRMaX-wJpT9h0"
     },
     {
       "id": 3,
       "title": "The Great Gatsby",
+      "kinkLine": "Love To have you!",
       "author": "F. Scott Fitzgerald",
-      "year": 1925,
-      "genre": "Classic",
-      "description": "A story of the young and mysterious millionaire Jay Gatsby and his quixotic passion for the beautiful Daisy Buchanan in the Roaring Twenties.",
-      "short_description": "A tragic romance set in the Roaring Twenties.",
-      "thumbnail": "https://example.com/greatgatsby.jpg"
+      "thumbnail": "https://fastly.picsum.photos/id/55/3888/2592.jpg?hmac=97Zgf0wBRr09RnK-KnkKkBy5wZP1aCtnL_5ICrgJdhk"
     },
     {
       "id": 4,
       "title": "Moby Dick",
+      "kinkLine": "Love To have you!",
       "author": "Herman Melville",
-      "year": 1851,
-      "genre": "Adventure",
-      "description": "The narrative of Captain Ahab's obsessive quest to seek revenge on the gigantic white whale that crippled him.",
-      "short_description": "An epic sea adventure and the quest for revenge.",
-      "thumbnail": "https://example.com/mobydick.jpg"
+      "thumbnail": "https://fastly.picsum.photos/id/122/3888/2592.jpg?hmac=xkROmdWG_MzDmpTM2MTawXrpURb60jcTqzkxatKBbOk"
     },
     {
       "id": 5,
       "title": "Pride and Prejudice",
+      "kinkLine": "Love To have you!",
       "author": "Jane Austen",
-      "year": 1813,
-      "genre": "Romance",
-      "description": "A romantic novel that highlights the issues of class, marriage, and morality in 19th century England through the story of Elizabeth Bennet and Mr. Darcy.",
-      "short_description": "A witty romance in 19th century England.",
-      "thumbnail": "https://example.com/prideandprejudice.jpg"
+      "thumbnail": "https://fastly.picsum.photos/id/92/3888/2592.jpg?hmac=zjtfq2PUyiCMP_fW5nSOu7R7ORcLetm-M3gyCPwNMKI"
+    },
+    {
+      "id": 6,
+      "title": "Twisted Love",
+      "kinkLine": "To my mom, for all her support and encouragement over the years. Mom, if you are reading this, turn back immediately. There are scenes in here that will scar you for life.",
+      "author": "Ana Huang",
+      "thumbnail": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1599915351i/52748389.jpg"
     }
   ]
 }
