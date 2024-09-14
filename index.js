@@ -3,10 +3,13 @@ const express = require('express');
 const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
 const { ObjectId } = require('mongodb');
+const cors = require('cors');
 
 // Initialize the Express application
 const app = express();
 const port = process.env.PORT || 3000;
+// Use the CORS middleware
+app.use(cors());
 
 // Use body-parser to parse JSON bodies
 app.use(bodyParser.json());
