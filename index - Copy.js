@@ -4,8 +4,6 @@ const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
 const { ObjectId } = require('mongodb');
 const cors = require('cors');
-const multer = require('multer');
-const ImageKit = require('imagekit');
 
 // Initialize the Express application
 const app = express();
@@ -15,17 +13,6 @@ app.use(cors());
 
 // Use body-parser to parse JSON bodies
 app.use(bodyParser.json());
-
-// Configure ImageKit
-const imagekit = new ImageKit({
-  publicKey: "public_X2K7BKMgxM/LIhO42Qhvx36Mn4U=",
-  privateKey: "private_WHb7RyfZlZM+nnYxo919sk/CCgw=",     // Replace with your private API key
-  urlEndpoint: "https://ik.imagekit.io/08x8jz0ll8" // Replace with your URL endpoint
-});
-
-// Set up multer for file handling
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
 // Get the MongoDB URI from the environment variables
 const uri = process.env.MONGODB_URI;
@@ -174,7 +161,7 @@ app.post('/add-books', async (req, res) => {
     const { book_id, title, pageNumber } = req.body;
   
     // Validate request body
-    if (typeof book_id !== 'string' || typeof title !== 'string' || typeof pageNumber !== 'string') {
+    if (typeof book_id !== 'string' || typeof title !== 'string' || typeof pageNumber !== 'number') {
       return res.status(400).json({ error: 'Invalid input data' });
     }
   
@@ -242,7 +229,7 @@ app.post('/add-books', async (req, res) => {
       typeof chapterId !== 'string' ||
       typeof bookId !== 'string' ||
       typeof title !== 'string' ||
-      typeof totalPages !== 'string' ||
+      typeof totalPages !== 'number' ||
       typeof backgroundImage !== 'string' ||
       typeof chapterDetails !== 'string'
     ) {
@@ -278,28 +265,7 @@ app.post('/add-books', async (req, res) => {
   
   
   
-  // Route for file upload
-app.post('/upload', upload.single('image'), (req, res) => {
-  const file = req.file;
-
-  if (!file) {
-      return res.status(400).send('No file uploaded');
-  }
-
-  // Upload image to ImageKit
-  imagekit.upload({
-      file: file.buffer.toString('base64'), // Convert buffer to base64
-      fileName: file.originalname,          // Original file name
-      folder: '/uploads',                   // (Optional) Folder path in ImageKit
-  }, function (error, result) {
-      if (error) {
-          return res.status(500).json({ error: 'Image upload failed', details: error.message });
-      }
-
-      // Send back the image URL
-      return res.status(200).json({ url: result.url });
-  });
-});
+  
   
 
     // Start the server
