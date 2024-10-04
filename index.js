@@ -323,7 +323,7 @@ app.post('/saveWishlist', async (req, res) => {
     };
 
     const result = await wishlistCollection.insertOne(wishlistItem);
-    res.status(201).json({ message: 'Item added to wishlist successfully', wishlistId: result.insertedId });
+    res.status(201).json({ status:200, message: 'Item added to wishlist successfully', wishlistId: result.insertedId });
   } catch (error) {
     console.error("Error adding to wishlist:", error);
     res.status(500).json({ error: 'Failed to add item to wishlist' });
