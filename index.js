@@ -43,6 +43,7 @@ async function main() {
     const bookCollection = database.collection('book_list');
     const chapterCollection = database.collection('chapter_list');
     const chapterDetailsCollection = database.collection('chapter_details');
+    const wishlistCollection = database.collection('wishlist');
 
     // Define a route to get all books
     app.get('/books', async (req, res) => {
@@ -299,6 +300,65 @@ app.post('/upload', upload.single('image'), (req, res) => {
       // Send back the image URL
       return res.status(200).json({ url: result.url });
   });
+});
+
+
+
+// Route to add a book to the wishlist
+app.post('/saveWishlist', async (req, res) => {
+  const { userId, book } = req.body;
+
+  // Validate request body
+  if (!userId || !book || !book._id || !book.title) {
+    return res.status(400).json({ error: 'Missing required fields: userId or book details' });
+  }
+
+  try {
+    const wishlistItem = {
+      userId,
+      itemId: book._id, // Assuming you want to store the book ID
+      itemType: 'book', // Indicating the type of item
+      addedDate: new Date(),
+      bookDetails: book // Storing the entire book object
+    };
+
+    const result = await wishlistCollection.insertOne(wishlistItem);
+    res.status(201).json({ message: 'Item added to wishlist successfully', wishlistId: result.insertedId });
+  } catch (error) {
+    console.error("Error adding to wishlist:", error);
+    res.status(500).json({ error: 'Failed to add item to wishlist' });
+  }
+});
+
+// Route to get all wishlist items for a user
+app.get('/getWishlist/:userId', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const wishlistItems = await wishlistCollection.find({ userId }).toArray();
+    res.status(200).json(wishlistItems);
+  } catch (error) {
+    console.error("Error retrieving wishlist:", error);
+    res.status(500).json({ error: 'Failed to retrieve wishlist' });
+  }
+});
+
+// Route to delete an item from the wishlist
+app.delete('/removeWishlist/:id', async (req, res) => {
+  const wishlistId = req.params.id;
+
+  try {
+    const result = await wishlistCollection.deleteOne({ _id: new ObjectId(wishlistId) });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Wishlist item not found' });
+    }
+
+    res.status(200).json({ message: 'Wishlist item deleted successfully' });
+  } catch (error) {
+    console.error("Error deleting wishlist item:", error);
+    res.status(500).json({ error: 'Failed to delete wishlist item' });
+  }
 });
   
 
