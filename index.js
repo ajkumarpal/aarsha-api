@@ -56,6 +56,32 @@ async function main() {
     });
 
 
+    app.get('/books-category-based-list', async (req, res) => {
+      const { pageSize, genre, title, author } = req.query;
+  
+      try {
+          // Construct the query object based on the provided filters
+          const query = {};
+          if (genre) {
+              query.genre = genre;
+          }
+          if (title) {
+              query.title = { $regex: title, $options: 'i' }; // Case-insensitive search
+          }
+          if (author) {
+              query.author = { $regex: author, $options: 'i' }; // Case-insensitive search
+          }
+  
+          const books = await bookCollection.find(query).limit(Number(pageSize)).toArray();
+  
+          res.status(200).json(books);
+      } catch (error) {
+          res.status(500).json({ error: 'Failed to retrieve books' });
+      }
+  });
+  
+
+
     // Define a route to get chapters based on book ID
 app.get('/chapters/:bookId', async (req, res) => {
   const bookId = req.params.bookId;
