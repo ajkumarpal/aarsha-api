@@ -6,10 +6,13 @@ const { ObjectId } = require('mongodb');
 const cors = require('cors');
 const multer = require('multer');
 const ImageKit = require('imagekit');
+const jwt = require('jsonwebtoken');
+
 
 // Initialize the Express application
 const app = express();
 const port = process.env.PORT || 3000;
+const nodemailer = require('nodemailer');
 // Use the CORS middleware
 app.use(cors());
 
@@ -387,6 +390,87 @@ app.delete('/removeWishlist/:id', async (req, res) => {
   }
 });
   
+
+
+
+// ************************Email Register With OTP ******************************
+// Transporter for Nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Use your email service
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+// User registration endpoint
+app.post('/register', async (req, res) => {
+  const { email, password, confirmPassword } = req.body;
+
+  // Basic validation
+  if (!email || !password || password !== confirmPassword) {
+    return res.status(400).json({ message: 'Invalid input' });
+  }
+
+  // Generate a random OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // Store OTP in MongoDB with an expiration time
+  const otpCollection = client.db('aarsha').collection('otp');
+  const expirationTime = new Date(Date.now() + 10 * 60 * 1000); // 1 minute from now
+
+  await otpCollection.updateOne(
+    { email },
+    { $set: { otp, expiresAt: expirationTime } },
+    { upsert: true }
+  );
+
+  // Send OTP to user's email
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: 'Your AARSHA OTP Code',
+    text: `Your OTP code is ${otp}. It will expire in 1 minute.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; border-radius: 8px;">
+        <h2 style="color: #333;">Your OTP Code</h2>
+        <p style="font-size: 18px; color: #555;">
+          Your OTP code is <strong style="font-size: 24px; color: #007BFF;">${otp}</strong>.
+        </p>
+        <p style="color: #555;">It will expire in 1 minute.</p>
+        <p style="font-size: 14px; color: #888;">If you did not request this, please ignore this email.</p>
+      </div>
+    `,
+  };
+
+  transporter.sendMail(mailOptions, (error) => {
+    if (error) {
+      return res.status(500).json({ message: 'Error sending OTP' });
+    }
+    res.status(200).json({ status: 200, message: 'OTP sent to your email' });
+  });
+});
+
+// OTP verification endpoint
+app.post('/verify-otp', async (req, res) => {
+  const { email, otp } = req.body;
+
+  // Retrieve OTP from MongoDB
+  const otpCollection = client.db('aarsha').collection('otp');
+  const otpRecord = await otpCollection.findOne({ email });
+
+  // Check if OTP exists and matches, and ensure it hasn't expired
+  if (otpRecord && otpRecord.otp === otp && new Date() < otpRecord.expiresAt) {
+    await otpCollection.deleteOne({ email }); // Clear OTP after verification
+
+    // Create JWT token
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    return res.status(200).json({ status: 200, message: 'OTP verified successfully', token });
+  }
+
+  res.status(400).json({ status: 400, message: 'Invalid or expired OTP' });
+});
 
     // Start the server
     app.listen(port, () => {
