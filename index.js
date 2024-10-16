@@ -7,6 +7,7 @@ const cors = require('cors');
 const multer = require('multer');
 const ImageKit = require('imagekit');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 
 // Initialize the Express application
@@ -405,10 +406,10 @@ const transporter = nodemailer.createTransport({
 
 // User registration endpoint
 app.post('/register', async (req, res) => {
-  const { email, password, confirmPassword } = req.body;
+  const { name, email, password, confirmPassword } = req.body;
 
   // Basic validation
-  if (!email || !password || password !== confirmPassword) {
+  if (!name || !email || !password || password !== confirmPassword) {
     return res.status(400).json({ message: 'Invalid input' });
   }
 
@@ -429,7 +430,7 @@ app.post('/register', async (req, res) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
-    subject: 'Your AARSHA OTP Code',
+    subject: `Hi ${name} your AARSHA OTP Code`,
     text: `Your OTP code is ${otp}. It will expire in 1 minute.`,
     html: `
       <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; border-radius: 8px;">
@@ -452,8 +453,29 @@ app.post('/register', async (req, res) => {
 });
 
 // OTP verification endpoint
+// app.post('/verify-otp', async (req, res) => {
+//   const { email, otp } = req.body;
+
+//   // Retrieve OTP from MongoDB
+//   const otpCollection = client.db('aarsha').collection('otp');
+//   const otpRecord = await otpCollection.findOne({ email });
+
+//   // Check if OTP exists and matches, and ensure it hasn't expired
+//   if (otpRecord && otpRecord.otp === otp && new Date() < otpRecord.expiresAt) {
+//     await otpCollection.deleteOne({ email }); // Clear OTP after verification
+
+//     // Create JWT token
+//     const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+//     return res.status(200).json({ status: 200, message: 'OTP verified successfully', token });
+//   }
+
+//   res.status(400).json({ status: 400, message: 'Invalid or expired OTP' });
+// });
+
+// OTP verification endpoint
 app.post('/verify-otp', async (req, res) => {
-  const { email, otp } = req.body;
+  const { name, email, otp, password } = req.body;
 
   // Retrieve OTP from MongoDB
   const otpCollection = client.db('aarsha').collection('otp');
@@ -463,14 +485,66 @@ app.post('/verify-otp', async (req, res) => {
   if (otpRecord && otpRecord.otp === otp && new Date() < otpRecord.expiresAt) {
     await otpCollection.deleteOne({ email }); // Clear OTP after verification
 
+    // Hash the password before saving it
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Store user email and hashed password in MongoDB
+    const usersCollection = client.db('aarsha').collection('users');
+    await usersCollection.updateOne(
+      { email },
+      { $set: { email, password: hashedPassword, name: name } },
+      { upsert: true }
+    );
+
     // Create JWT token
     const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    return res.status(200).json({ status: 200, message: 'OTP verified successfully', token });
+    return res.status(200).json({ status: 200, message: 'OTP verified successfully and user registered', token });
   }
 
   res.status(400).json({ status: 400, message: 'Invalid or expired OTP' });
 });
+
+
+// User login endpoint
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  // Basic validation
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
+  }
+
+  // Retrieve the user from the database
+  const usersCollection = client.db('aarsha').collection('users');
+  const user = await usersCollection.findOne({ email });
+
+  // Check if user exists
+  if (!user) {
+    return res.status(401).json({ message: 'Invalid email or password' });
+  }
+
+  // Compare the entered password with the stored hashed password
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    return res.status(401).json({ message: 'Invalid email or password' });
+  }
+
+  // Create JWT token
+  const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+  // Return success response with token, name, and email
+  res.status(200).json({
+    message: 'Login successful',
+    token,
+    user: {
+      name: user.name, // Assuming you have a 'name' field in your user document
+      email: user.email,
+    },
+  });
+});
+
+
 
     // Start the server
     app.listen(port, () => {
